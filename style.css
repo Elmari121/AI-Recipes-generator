@@ -1,16 +1,16 @@
 body {
-    background-color: #f8f4eb; 
+    background: linear-gradient(87.4deg, rgb(255, 241, 165) 1.9%, rgb(200, 125, 76) 49.7%, rgb(83, 54, 54) 100.5%);
     font-family: 'Arial', sans-serif;
     color: #5d4037;
 }
 
 a {
-    color: #c27c53; 
+    color: white;
     text-decoration: none;
 }
 
 a:hover {
-    color: #8e5d3b;
+    color:white;
 }
 
 .container {
@@ -105,10 +105,10 @@ footer {
 }
 
 footer a {
-    color: #c27c53; 
+    color: white; 
 }
 
 footer a:hover {
-    color: #8e5d3b; 
+    color: black; 
 }
 
