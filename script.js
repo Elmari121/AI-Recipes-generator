@@ -1,38 +1,42 @@
-let apiKey = "2046c535afeb092fo82f1d306d8a2b2t";
+function displayRecipe(response) {
+    
+    document.getElementById("recipe-title").innerText = "Recipe for: " + response.data.result.title || "No title available";
 
-
-function generateRecipe() {
-let recipeName = document.getElementById("recipe-name").value.trim();
-if (!recipeName) {
- alert("Please enter a recipe name.");
-        return;
+    
+    if (response.data.result.ingredients) {
+        let ingredientsList = response.data.result.ingredients.map(ingredient => `<li>${ingredient}</li>`).join("");
+        document.getElementById("ingredients").innerHTML = `<h3>Ingredients:</h3><ul>${ingredientsList}</ul>`;
     }
-         let prompt = recipeName;
-    let context = "Generate a detailed recipe with ingredients and steps.";
-    let apiURL = `https://api.shecodes.io/ai/v1/generate?key=${apiKey}`;
-    let url = `${apiURL}&prompt=${encodeURIComponent(prompt)}&context=${encodeURIComponent(context)}`;
-     document.getElementById("recipe-title").innerText = "Loading...";
-      axios.get(url)
-        .then((response) => {
-             document.getElementById("recipe-title").innerText = "";
-            document.getElementById("ingredients").innerHTML = "";
-            document.getElementById("steps").innerHTML = "";
-            if (response.data && response.data.result) {
-                let result = response.data.result;
-                document.getElementById("recipe-title").innerText = result.title || "No title available";
-                if (result.ingredients) {
-                    let ingredientsList = result.ingredients.map(ingredient => `<li>${ingredient}</li>`).join("");
-                    document.getElementById("ingredients").innerHTML = `<h3>Ingredients</h3><ul>${ingredientsList}</ul>`;
-                }
-                    if (result.steps) {
-                    let stepsList = result.steps.map(step => `<li>${step}</li>`).join("");
-                    document.getElementById("steps").innerHTML = `<h3>Steps</h3><ol>${stepsList}</ol>`;
-                } } else {
-                document.getElementById("recipe-title").innerText = "Error: No recipe found.";
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching recipe:", error);
-            document.getElementById("recipe-title").innerText = "Error: Unable to fetch recipe.";
-        });
+
+    
+    if (response.data.result.steps) {
+        let stepsList = response.data.result.steps.map(step => `<li>${step}</li>`).join("");
+        document.getElementById("steps").innerHTML = `<h3>Steps:</h3><ol>${stepsList}</ol>`;
+    }
 }
+
+function generateRecipe(event) {
+    event.preventDefault(); 
+
+    let recipeNameInput = document.querySelector("#recipe-name");
+    let apiKey = "2046c535afeb092fo82f1d306d8a2b2t";
+    let context = "You are a culinary expert. Your task is to create a detailed recipe including ingredients and steps. Please provide a title, a list of ingredients, and step-by-step instructions. Make sure to follow the user's recipe request exactly.";
+    let prompt = `User instructions: Generate a recipe for ${recipeNameInput.value}`;
+    let apiURL = `https://api.shecodes.io/ai/v1/generate?prompt=${encodeURIComponent(prompt)}&context=${encodeURIComponent(context)}&key=${apiKey}`;
+
+    let recipeElement = document.querySelector("#recipe-display");
+    recipeElement.classList.remove("hidden");
+    recipeElement.innerHTML = `<div class="generating">⏳ Generating a recipe for "${recipeNameInput.value}"</div>`;
+
+    axios.get(apiURL).then(displayRecipe);
+}
+
+// Ensure the form exists before adding the event listener
+let recipeFormElement = document.querySelector("#recipe-generator-form");
+
+if (recipeFormElement) {
+    recipeFormElement.addEventListener("submit", generateRecipe);
+} else {
+    console.error("Form element not found!");
+}
+
